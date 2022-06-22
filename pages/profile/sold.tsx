@@ -1,9 +1,9 @@
 import type { NextPage } from "next";
-import Layout from "../components/layout";
+import Layout from "../../components/layout";
 
-const Home: NextPage = () => {
+const Sold: NextPage = () => {
   return (
-    <Layout title="Home" hasTabBar>
+    <Layout canGoBack title="Sell">
       <div className="flex flex-col space-y-5 py-10">
         {[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1].map((_, i) => (
           <div
@@ -58,7 +58,7 @@ const Home: NextPage = () => {
             </div>
           </div>
         ))}
-        <button className="fixed bottom-24 right-5 bg-orange-400 hover:bg-orange-500  active:bg-orange-600 transition-color shadow-xl rounded-full p-4 text-white cursor-pointer html">
+        <button className="fixed bottom-14 right-5 bg-orange-400 hover:bg-orange-500  active:bg-orange-600 transition-color shadow-xl rounded-full p-4 text-white cursor-pointer html">
           <svg
             className="h-6 w-6"
             xmlns="http://www.w3.org/2000/svg"
@@ -80,4 +80,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default Sold;
