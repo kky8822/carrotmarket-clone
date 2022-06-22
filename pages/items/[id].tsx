@@ -7,11 +7,13 @@ const ItemDetail: NextPage = () => {
         <div className="h-96 bg-zinc-500" />
         <div className="flex py-3 border-t border-b items-center space-x-3 cursor-pointer">
           <div className="w-12 h-12 rounded-full bg-zinc-500" />
-          <div>
-            <p className="text-sm font-medium text-gray-700">Steve Jebs</p>
-            <p className="text-xs font-medium text-gray-500">
+          <div className="flex flex-col">
+            <span className="text-sm font-medium text-gray-700">
+              Steve Jebs
+            </span>
+            <span className="text-xs font-medium text-gray-500">
               View profile &rarr;
-            </p>
+            </span>
           </div>
         </div>
         <div className="mt-5">
