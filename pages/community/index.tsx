@@ -8,8 +8,8 @@ const Community: NextPage = () => {
     <Layout title="동네생활" hasTabBar>
       <div className="py-16 space-y-8">
         {[1, 2, 3, 4, 5].map((id, key) => (
-          <Link href={`/community/${id}`}>
-            <div key={key}>
+          <Link href={`/community/${id}`} key={key}>
+            <a className="block">
               <div className="flex flex-col items-start px-4">
                 <span className="flex items-center rounded-full py-0.5 px-2.5 text-xs font-medium bg-gray-100 text-gray-800">
                   동네질문
@@ -60,7 +60,7 @@ const Community: NextPage = () => {
                   <span>답변 1</span>
                 </span>
               </div>
-            </div>
+            </a>
           </Link>
         ))}
 

@@ -8,13 +8,13 @@ const Stream: NextPage = () => {
     <Layout title="Streams" hasTabBar>
       <div className="py-10  divide-y-2 space-y-4">
         {[1, 2, 3, 4, 5].map((id, key) => (
-          <Link href={`/streams/${id}`}>
-            <div className="pt-4  px-4" key={key}>
+          <Link href={`/streams/${id}`} key={key}>
+            <a className="pt-4 px-4 block">
               <div className="w-full rounded-md shadow-sm bg-zinc-500 aspect-video" />
               <h1 className="text-2xl mt-2 font-bold text-gray-900">
                 Galaxy S50
               </h1>
-            </div>
+            </a>
           </Link>
         ))}
         <FloatingBtn href="/streams/create">
