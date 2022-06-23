@@ -50,9 +50,14 @@ export default function Layout({
       </div>
       <div className={cls("pt-8", hasTabBar ? "pb-12" : "")}>{children}</div>
       {hasTabBar ? (
-        <nav className="bg-white max-w-xl text-gray-700 border-t fixed bottom-0 w-full px-5 pb-5 pt-3 flex justify-between text-xs">
+        <nav className="bg-white max-w-xl text-gray-700 border-t fixed bottom-0 w-full px-5 py-3 flex justify-between text-xs">
           <Link href="/">
-            <a className="flex flex-col items-center space-y-2">
+            <a
+              className={cls(
+                "flex flex-col items-center space-y-2",
+                router.pathname === "/" ? "text-orange-500" : ""
+              )}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
@@ -71,7 +76,12 @@ export default function Layout({
             </a>
           </Link>
           <Link href="/community">
-            <a className="flex flex-col items-center space-y-2">
+            <a
+              className={cls(
+                "flex flex-col items-center space-y-2",
+                router.pathname === "/community" ? "text-orange-500" : ""
+              )}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
@@ -90,7 +100,12 @@ export default function Layout({
             </a>
           </Link>
           <Link href="/chats">
-            <a className="flex flex-col items-center space-y-2">
+            <a
+              className={cls(
+                "flex flex-col items-center space-y-2",
+                router.pathname === "/chats" ? "text-orange-500" : ""
+              )}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
@@ -109,7 +124,12 @@ export default function Layout({
             </a>
           </Link>
           <Link href="/streams">
-            <a className="flex flex-col items-center space-y-2">
+            <a
+              className={cls(
+                "flex flex-col items-center space-y-2",
+                router.pathname === "/streams" ? "text-orange-500" : ""
+              )}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
@@ -128,7 +148,12 @@ export default function Layout({
             </a>
           </Link>
           <Link href="/profile">
-            <a className="flex flex-col items-center space-y-2">
+            <a
+              className={cls(
+                "flex flex-col items-center space-y-2",
+                router.pathname === "/profile" ? "text-orange-500" : ""
+              )}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
