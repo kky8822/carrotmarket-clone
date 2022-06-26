@@ -13,11 +13,8 @@ export default function Forms() {
     handleSubmit,
     formState: { errors },
   } = useForm<IForm>({ mode: "onChange" });
-  const onValid = (data: IForm) => {
-    console.log("im valid");
-  };
+  const onValid = (data: IForm) => {};
   const onInvalid = (errors: FieldErrors) => {};
-  console.log(errors);
 
   return (
     <form onSubmit={handleSubmit(onValid, onInvalid)}>
