@@ -1,4 +1,5 @@
 import twilio from "twilio";
+import mg from "mailgun-js";
 import type { NextApiRequest, NextApiResponse } from "next/types";
 import client from "@libs/server/client";
 import withHandler, { ResponseType } from "@libs/server/withHandler";
@@ -31,12 +32,27 @@ async function handler(
     },
   });
   if (phone) {
-    await twilioClient.messages.create({
-      messagingServiceSid: process.env.TWILIO_MS_SID,
-      to: process.env.MY_PHONE!,
-      body: `Your login token is ${payload}`,
-    });
+    // await twilioClient.messages.create({
+    //   messagingServiceSid: process.env.TWILIO_MS_SID,
+    //   to: process.env.MY_PHONE!,
+    //   body: `Your login token is ${payload}`,
+    // });
+  } else if (email) {
+    // const email = await mg({
+    //   apiKey: process.env.MG_APIKEY!,
+    //   domain: process.env.MG_DOMAIN!,
+    // })
+    //   .messages()
+    //   .send({
+    //     from: "kky8822@gmail.com",
+    //     to: "kky8822@gmail.com",
+    //     subject: "Your Carrot Market Verification Email",
+    //     text: `Your token is ${payload}`,
+    //     html: `<strong>Your token is ${payload}</strong>`,
+    //   });
+    // console.log(email);
   }
+
   /* if (email) {
     user = await client.user.findUnique({
       where: {
