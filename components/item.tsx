@@ -18,7 +18,7 @@ export default function Item({
   hearts,
 }: IItem) {
   return (
-    <Link href={`/items/${id}`}>
+    <Link href={`/products/${id}`}>
       <a className="flex px-4 py-4 justify-between cursor-pointer">
         <div className="flex space-x-4">
           <div className="aspect-square w-20 bg-zinc-500 rounded-md" />
