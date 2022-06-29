@@ -2,8 +2,32 @@ import type { NextPage } from "next";
 import Button from "@components/button";
 import Layout from "@components/layout";
 import Textarea from "@components/textarea";
+import { useRouter } from "next/router";
+import useSWR from "swr";
+import { Answer, Post, User } from "@prisma/client";
+import Link from "next/link";
+
+interface PostWithUser extends Post {
+  user: User;
+  _count: {
+    wonderings: number;
+    answers: number;
+  };
+  answers: Answer[];
+}
+
+interface CommunityPostResponse {
+  ok: boolean;
+  post: PostWithUser;
+}
 
 const CommunityPostDetail: NextPage = () => {
+  const router = useRouter();
+  const { data } = useSWR<CommunityPostResponse>(
+    router.query.id ? `/api/posts/${router.query.id}` : null
+  );
+  console.log(data);
+
   return (
     <Layout canGoBack>
       <div className="py-10">
@@ -14,18 +38,20 @@ const CommunityPostDetail: NextPage = () => {
           <div className="w-10 h-10 rounded-full bg-zinc-500" />
           <div className="flex flex-col">
             <span className="text-sm font-medium text-gray-700">
-              Steve Jebs
+              {data?.post?.user.name}
             </span>
-            <span className="text-xs font-medium text-gray-500">
-              View profile &rarr;
-            </span>
+            <Link href={`/profile/${data?.post?.user?.id}`}>
+              <a className="text-xs font-medium text-gray-500">
+                View profile &rarr;
+              </a>
+            </Link>
           </div>
         </div>
 
         <div className="px-4">
           <div className="mt-2 text-gray-700">
-            <span className="text-orange-500 font-medium">Q.</span> What is the
-            best mandu restaurant?
+            <span className="text-orange-500 font-medium">Q.</span>
+            {data?.post?.question}
           </div>
         </div>
 
@@ -45,7 +71,7 @@ const CommunityPostDetail: NextPage = () => {
                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
               ></path>
             </svg>
-            <span>궁금해요 1</span>
+            <span>궁금해요 {data?.post?._count.wonderings}</span>
           </span>
           <span className="flex space-x-2 items-center text-sm">
             <svg
@@ -62,7 +88,7 @@ const CommunityPostDetail: NextPage = () => {
                 d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
               ></path>
             </svg>
-            <span>답변 1</span>
+            <span>답변 {data?.post?._count.answers}</span>
           </span>
         </div>
 

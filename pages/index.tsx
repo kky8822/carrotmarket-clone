@@ -5,7 +5,6 @@ import Layout from "@components/layout";
 import useUser from "@libs/client/useUser";
 import useSWR from "swr";
 import { Product } from "@prisma/client";
-import internal from "stream";
 
 interface ProductWithCount extends Product {
   _count: {

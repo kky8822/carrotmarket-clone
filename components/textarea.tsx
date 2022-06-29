@@ -5,6 +5,7 @@ interface ITextarea {
   name?: string;
   register: UseFormRegisterReturn;
   required: boolean;
+  [key: string]: any;
 }
 
 export default function Textarea({
@@ -12,6 +13,7 @@ export default function Textarea({
   name,
   register,
   required,
+  ...rest
 }: ITextarea) {
   return (
     <div>
@@ -30,6 +32,7 @@ export default function Textarea({
         className="mt-1 shadow-sm w-full rounded-md border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500"
         rows={4}
         required={required}
+        {...rest}
       />
     </div>
   );
