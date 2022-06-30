@@ -8,11 +8,11 @@ async function handler(
   res: NextApiResponse<ResponseType>
 ) {
   const {
-    query: { id },
     session: { user },
+    query: { id },
   } = req;
 
-  const product = await client.product.findUnique({
+  const post = await client.post.findUnique({
     where: {
       id: +id.toString(),
     },
@@ -21,29 +21,32 @@ async function handler(
     },
   });
 
-  if (!product) return;
+  if (!post) return;
 
-  const alreadyExists = await client.fav.findFirst({
+  const alreadyExists = await client.wondering.findFirst({
     where: {
-      productId: +id.toString(),
       userId: user?.id,
+      postId: +id.toString(),
+    },
+    select: {
+      id: true,
     },
   });
   if (alreadyExists) {
-    await client.fav.delete({
+    await client.wondering.delete({
       where: {
         id: alreadyExists.id,
       },
     });
   } else {
-    await client.fav.create({
+    await client.wondering.create({
       data: {
         user: {
           connect: {
             id: user?.id,
           },
         },
-        product: {
+        post: {
           connect: {
             id: +id.toString(),
           },
