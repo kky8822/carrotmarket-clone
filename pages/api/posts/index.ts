@@ -9,13 +9,15 @@ async function handler(
 ) {
   if (req.method === "POST") {
     const {
-      body: { question },
+      body: { question, latitude, longitude },
       session: { user },
     } = req;
 
     const post = await client.post.create({
       data: {
         question,
+        latitude,
+        longitude,
         user: {
           connect: { id: user?.id },
         },
@@ -27,15 +29,31 @@ async function handler(
       post,
     });
   } else if (req.method === "GET") {
+    const { latitude, longitude } = req.query;
+    console.log(latitude, longitude);
+
     const posts = await client.post.findMany({
-      include: {
-        _count: {
-          select: { wonderings: true, answers: true },
-        },
+      select: {
+        question: true,
+        createdAt: true,
+        id: true,
         user: {
           select: {
             name: true,
           },
+        },
+        _count: {
+          select: { wonderings: true, answers: true },
+        },
+      },
+      where: {
+        latitude: {
+          gte: +latitude.toString() - 0.01,
+          lte: +latitude.toString() + 0.01,
+        },
+        longitude: {
+          gte: +longitude.toString() - 0.01,
+          lte: +longitude.toString() + 0.01,
         },
       },
     });

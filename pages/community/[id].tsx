@@ -9,6 +9,7 @@ import Link from "next/link";
 import useMutation from "@libs/client/useMutation";
 import { cls } from "@libs/client/utils";
 import { useForm } from "react-hook-form";
+import { useEffect } from "react";
 
 interface AnswerWithUser extends Answer {
   user: User;
@@ -33,9 +34,14 @@ interface AnswerForm {
   answer: string;
 }
 
+interface AnswerResposne {
+  ok: boolean;
+  response: Answer;
+}
+
 const CommunityPostDetail: NextPage = () => {
   const router = useRouter();
-  const { register, handleSubmit } = useForm<AnswerForm>();
+  const { register, handleSubmit, reset } = useForm<AnswerForm>();
   const { data, mutate } = useSWR<CommunityPostResponse>(
     router.query.id ? `/api/posts/${router.query.id}` : null
   );
@@ -43,7 +49,7 @@ const CommunityPostDetail: NextPage = () => {
     `/api/posts/${router.query.id}/wonder`
   );
   const [sendAnswer, { data: answerData, loading: answerLoading }] =
-    useMutation(`/api/posts/${router.query.id}/answer`);
+    useMutation<AnswerResposne>(`/api/posts/${router.query.id}/answer`);
   const onWonderClick = () => {
     if (!data) return;
     if (loading) return;
@@ -69,6 +75,13 @@ const CommunityPostDetail: NextPage = () => {
     if (answerLoading) return;
     sendAnswer(form);
   };
+  useEffect(() => {
+    if (answerData && answerData.ok) {
+      console.log(answerData);
+      reset();
+      mutate();
+    }
+  }, [answerData, reset, mutate]);
 
   return (
     <Layout canGoBack>

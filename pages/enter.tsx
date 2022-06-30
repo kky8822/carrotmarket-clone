@@ -52,6 +52,7 @@ export default function Enter() {
       router.push("/");
     }
   }, [tokenData, router]);
+  console.log(tokenData);
 
   return (
     <div className="mt-16 px-4">

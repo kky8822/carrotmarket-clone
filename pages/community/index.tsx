@@ -5,6 +5,7 @@ import Layout from "@components/layout";
 import useSWR from "swr";
 import { Post, User } from "@prisma/client";
 import moment from "moment";
+import useCoords from "@libs/client/useCoords";
 
 interface PostWithUserCount extends Post {
   user: User;
@@ -20,7 +21,12 @@ interface PostsResponse {
 }
 
 const Community: NextPage = () => {
-  const { data } = useSWR<PostsResponse>("/api/posts");
+  const { latitude, longitude } = useCoords();
+  const { data } = useSWR<PostsResponse>(
+    latitude && longitude
+      ? `/api/posts?latitude=${latitude}&longitude=${longitude}`
+      : null
+  );
 
   return (
     <Layout title="동네생활" hasTabBar>
@@ -38,7 +44,7 @@ const Community: NextPage = () => {
                 </div>
                 <div className="mt-5 flex items-center justify-between w-full text-gray-500 text-xs font-medium">
                   <span>{post.user.name}</span>
-                  <span>{post.createdAt}</span>
+                  <span>{post.createdAt + ""}</span>
                 </div>
               </div>
 
