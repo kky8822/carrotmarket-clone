@@ -23,21 +23,23 @@ async function handler(
 
   if (!product) return;
 
-  const alreadyExists = await client.fav.findFirst({
+  const alreadyExists = await client.record.findFirst({
     where: {
       productId: +id.toString(),
       userId: user?.id,
+      kind: "Fav",
     },
   });
   if (alreadyExists) {
-    await client.fav.delete({
+    await client.record.delete({
       where: {
         id: alreadyExists.id,
       },
     });
   } else {
-    await client.fav.create({
+    await client.record.create({
       data: {
+        kind: "Fav",
         user: {
           connect: {
             id: user?.id,

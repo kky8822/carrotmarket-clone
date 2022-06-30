@@ -30,8 +30,6 @@ async function handler(
     });
   } else if (req.method === "GET") {
     const { latitude, longitude } = req.query;
-    console.log(latitude, longitude);
-
     const posts = await client.post.findMany({
       select: {
         question: true,

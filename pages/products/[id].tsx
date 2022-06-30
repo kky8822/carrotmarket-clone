@@ -3,7 +3,7 @@ import Button from "@components/button";
 import Layout from "@components/layout";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { Fav, Product, User } from "@prisma/client";
+import { Product, User } from "@prisma/client";
 import Link from "next/link";
 import useMutation from "@libs/client/useMutation";
 import { cls } from "@libs/client/utils";
@@ -24,6 +24,7 @@ const ItemDetail: NextPage = () => {
   const { data, mutate } = useSWR<ItemDetailResponse>(
     router.query.id ? `/api/products/${router.query.id}` : null
   );
+  console.log(data);
   const [toggleFav] = useMutation(`/api/products/${router.query.id}/fav`);
   const onFavClick = () => {
     toggleFav({});

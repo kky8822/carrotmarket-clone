@@ -77,7 +77,6 @@ const CommunityPostDetail: NextPage = () => {
   };
   useEffect(() => {
     if (answerData && answerData.ok) {
-      console.log(answerData);
       reset();
       mutate();
     }

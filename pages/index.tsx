@@ -4,17 +4,18 @@ import Item from "@components/item";
 import Layout from "@components/layout";
 import useUser from "@libs/client/useUser";
 import useSWR from "swr";
-import { Product } from "@prisma/client";
+import { Product, Record } from "@prisma/client";
 
-interface ProductWithCount extends Product {
-  _count: {
-    favs: number;
-  };
+interface RecordWithLength extends Record {
+  length: number;
+}
+interface ProductWithRecord extends Product {
+  records: RecordWithLength;
 }
 
 interface ProductsResponse {
   ok: boolean;
-  products: ProductWithCount[];
+  products: ProductWithRecord[];
 }
 
 const Home: NextPage = () => {
@@ -30,7 +31,7 @@ const Home: NextPage = () => {
             key={product.id}
             title={product.name}
             price={product.price}
-            hearts={product._count.favs}
+            hearts={product.records.length}
             comments={1}
           />
         ))}

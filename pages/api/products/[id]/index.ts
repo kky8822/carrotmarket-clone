@@ -39,10 +39,11 @@ async function handler(
     },
   });
   const isFav = Boolean(
-    await client.fav.findFirst({
+    await client.record.findFirst({
       where: {
         productId: product?.id,
         userId: user?.id,
+        kind: "Fav",
       },
       select: { id: true },
     })
