@@ -92,6 +92,7 @@ model Review {
   createdById  Int
   createdFor   User     @relation(name: "recievedReviews", fields: [createdForId], references: [id], onDelete: Cascade)
   createdForId Int
+  score        Int      @default(1)
 }
 
 model Record {
