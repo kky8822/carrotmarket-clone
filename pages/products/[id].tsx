@@ -32,7 +32,7 @@ const ItemDetail: NextPage = () => {
   };
 
   return (
-    <Layout title={data?.product?.name} canGoBack>
+    <Layout title="Products" canGoBack>
       <div className="px-4 py-10">
         <div className="mb-8">
           <div className="h-96 bg-zinc-500" />
