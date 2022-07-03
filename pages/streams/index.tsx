@@ -4,16 +4,70 @@ import FloatingBtn from "@components/floating-button";
 import Layout from "@components/layout";
 import useSWR from "swr";
 import { Stream } from "@prisma/client";
+import { useEffect, useState } from "react";
+import Button from "@components/button";
 
 interface StreamResponse {
   ok: boolean;
   streams: Stream[];
 }
+
+interface PageState {
+  page: number | null;
+}
+
 const Stream: NextPage = () => {
-  const { data } = useSWR<StreamResponse>("/api/streams");
+  const [page, setPage] = useState<PageState>(1);
+  const { data } = useSWR<StreamResponse>(
+    page ? `/api/streams?page=${page}` : null
+  );
+  const onPrevClick = () => {
+    setPage((prev) => prev - 1);
+  };
+  const onNextClick = () => {
+    setPage((prev) => prev + 1);
+  };
+
   return (
     <Layout title="Streams" hasTabBar>
       <div className="py-10  divide-y-2 space-y-4">
+        <div className="flex px-4 justify-between items-center space-x-4">
+          {page !== 1 && (
+            <button onClick={onPrevClick}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+          )}
+          <span>{page}</span>
+          <button onClick={onNextClick}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+        </div>
         {data?.streams.map((stream) => (
           <Link href={`/streams/${stream.id}`} key={stream.id}>
             <a className="pt-4 px-4 block">
