@@ -12,12 +12,8 @@ interface StreamResponse {
   streams: Stream[];
 }
 
-interface PageState {
-  page: number | null;
-}
-
 const Stream: NextPage = () => {
-  const [page, setPage] = useState<PageState>(1);
+  const [page, setPage] = useState<number>(1);
   const { data } = useSWR<StreamResponse>(
     page ? `/api/streams?page=${page}` : null
   );
