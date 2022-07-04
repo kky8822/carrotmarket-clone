@@ -5,7 +5,6 @@ import Layout from "@components/layout";
 import useSWR from "swr";
 import { Stream } from "@prisma/client";
 import { useEffect, useState } from "react";
-import Button from "@components/button";
 
 interface StreamResponse {
   ok: boolean;

@@ -35,10 +35,22 @@ const ItemDetail: NextPage = () => {
     <Layout title="Products" canGoBack>
       <div className="px-4 py-10">
         <div className="mb-8">
-          <div className="h-96 bg-zinc-500" />
+          <img
+            src={`https://imagedelivery.net/93usl5Ygdo4diWvQKul4DQ/${data?.product.image}/product`}
+            className="aspect-video"
+          />
+
           <Link href={`/profile/${data?.product?.user?.id}`}>
             <a className="flex py-3 border-t border-b items-center space-x-3 cursor-pointer">
-              <div className="w-12 h-12 rounded-full bg-zinc-500" />
+              {data?.product.user.avatar ? (
+                <img
+                  src={`https://imagedelivery.net/93usl5Ygdo4diWvQKul4DQ/${data?.product.user.avatar}/avatar`}
+                  className="w-12 h-12 rounded-full "
+                />
+              ) : (
+                <div className="w-12 h-12 rounded-full bg-zinc-500" />
+              )}
+
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-gray-700">
                   {data?.product?.user?.name}

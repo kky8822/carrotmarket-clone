@@ -34,12 +34,14 @@ const EditProfie: NextPage = () => {
     if (user?.name) setValue("name", user.name);
     if (user?.email) setValue("email", user.email);
     if (user?.phone) setValue("phone", user.phone);
+    if (user?.avatar)
+      setAvatarPreview(
+        `https://imagedelivery.net/93usl5Ygdo4diWvQKul4DQ/${user?.avatar}/avatar`
+      );
   }, [user, setValue]);
   const [editProfile, { loading, data, error }] =
     useMutation<EditProfileResponse>("/api/users/me");
-  const onValid = ({ name, email, phone, avatar }: EditProfileForm) => {
-    return;
-
+  const onValid = async ({ name, email, phone, avatar }: EditProfileForm) => {
     if (loading) return;
     if (name === "") {
       return setError("formErrors", {
@@ -51,11 +53,33 @@ const EditProfie: NextPage = () => {
         message: "Email or Phone number are required.",
       });
     }
-    editProfile({
-      name,
-      email,
-      phone,
-    });
+    if (avatar && avatar.length > 0 && user) {
+      const { uploadURL } = await (await fetch(`/api/files`)).json();
+
+      const form = new FormData();
+      form.append("file", avatar[0], user.id + "");
+      const {
+        result: { id },
+      } = await (
+        await fetch(uploadURL, {
+          method: "POST",
+          body: form,
+        })
+      ).json();
+
+      editProfile({
+        name,
+        email,
+        phone,
+        avatarId: id,
+      });
+    } else {
+      editProfile({
+        name,
+        email,
+        phone,
+      });
+    }
   };
   useEffect(() => {
     if (data && !data.ok) {
@@ -80,7 +104,7 @@ const EditProfie: NextPage = () => {
           {avatarPreview ? (
             <img
               src={avatarPreview}
-              className="w-14 h-14 rounded-full bg-zinc-500"
+              className="w-14 h-14 rounded-full bg-zinc-500 "
             />
           ) : (
             <div className="w-14 h-14 rounded-full bg-zinc-500" />
