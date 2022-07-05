@@ -10,23 +10,26 @@ datasource db {
 }
 
 model User {
-  id              Int         @id @default(autoincrement())
-  phone           String?     @unique
-  email           String?     @unique
-  name            String
-  avatar          String?     @db.MediumText
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  tokens          Token[]
-  products        Product[]
-  posts           Post[]
-  answers         Answer[]
-  wonderings      Wondering[]
-  writtenReviews  Review[]    @relation(name: "writtenReviews")
-  recievedReviews Review[]    @relation(name: "recievedReviews")
-  records         Record[]
-  streams         Stream[]
-  messages        Message[]
+  id                Int         @id @default(autoincrement())
+  phone             String?     @unique
+  email             String?     @unique
+  name              String
+  avatar            String?     @db.MediumText
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  tokens            Token[]
+  products          Product[]
+  posts             Post[]
+  answers           Answer[]
+  wonderings        Wondering[]
+  writtenReviews    Review[]    @relation(name: "writtenReviews")
+  recievedReviews   Review[]    @relation(name: "recievedReviews")
+  records           Record[]
+  streams           Stream[]
+  messages          Message[]
+  chats             Chat[]
+  purchaseChatrooms Chatroom[]  @relation(name: "purchaseChatrooms")
+  saleChatrooms     Chatroom[]  @relation(name: "saleChatrooms")
 }
 
 model Token {
@@ -39,16 +42,17 @@ model Token {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      Int
   image       String
   name        String
   price       Int
-  description String   @db.MediumText
+  description String     @db.MediumText
   records     Record[]
+  chatrooms   Chatroom[]
 }
 
 model Post {
@@ -135,4 +139,28 @@ model Message {
   message   String   @db.MediumText
   stream    Stream   @relation(fields: [streamId], references: [id], onDelete: Cascade)
   streamId  Int
+}
+
+model Chatroom {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId   Int
+  purchaser   User     @relation(name: "purchaseChatrooms", fields: [purchaserId], references: [id], onDelete: Cascade)
+  purchaserId Int      @default(1)
+  seller      User     @relation(name: "saleChatrooms", fields: [sellerId], references: [id], onDelete: Cascade)
+  sellerId    Int      @default(1)
+  chats       Chat[]
+}
+
+model Chat {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     Int
+  message    String   @db.MediumText
+  chatroom   Chatroom @relation(fields: [chatroomId], references: [id])
+  chatroomId Int
 }

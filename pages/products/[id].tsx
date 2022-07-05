@@ -9,6 +9,8 @@ import useMutation from "@libs/client/useMutation";
 import { cls } from "@libs/client/utils";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import ButtonGray from "@components/buttonGray";
+import { useForm } from "react-hook-form";
 
 interface ProductWithUser extends Product {
   user: User;
@@ -19,6 +21,11 @@ interface ItemDetailResponse {
   product: ProductWithUser;
   relatedProducts: Product[];
   isFav: boolean;
+}
+
+interface MakeChatRoomResponse {
+  ok: boolean;
+  chatroomId: number;
 }
 
 const ItemDetail: NextPage = () => {
@@ -32,10 +39,22 @@ const ItemDetail: NextPage = () => {
     if (!data) return;
     mutate({ ...data, isFav: !data.isFav }, false);
   };
-  const [talkToSeller, setTalkToSeller] = useState<boolean>(false);
-  const onBtnClick = () => {
-    setTalkToSeller((prev) => !prev);
+  const [popUp, setPopUp] = useState<boolean>(false);
+  const onPopUpBtnClick = () => {
+    setPopUp((prev) => !prev);
   };
+
+  const [makeChatRoom, { data: makeChatRoomData, loading }] =
+    useMutation<MakeChatRoomResponse>("/api/chats");
+  const onMakeChatRoomClick = () => {
+    if (loading) return;
+    makeChatRoom({ productId: router.query.id });
+  };
+  useEffect(() => {
+    if (makeChatRoomData && makeChatRoomData?.ok) {
+      router.push(`/chats/${makeChatRoomData.chatroomId}`);
+    }
+  }, [makeChatRoomData, router]);
 
   return (
     <Layout title="Products" canGoBack>
@@ -102,7 +121,7 @@ const ItemDetail: NextPage = () => {
           </div>
         </div>
         <div className="flex bg-white max-w-lg w-full fixed bottom-0 items-center justify-between space-x-2 border-t-[1.5px] border-gray-200 py-2">
-          <Button onClick={onBtnClick} large text="Talk to seller" />
+          <Button onClick={onPopUpBtnClick} large text="Talk to seller" />
           <button
             onClick={onFavClick}
             className={cls(
@@ -144,12 +163,16 @@ const ItemDetail: NextPage = () => {
             )}
           </button>
         </div>
-        {talkToSeller ? (
-          <div className="fixed top-1/2 w-2/3 h-[200px] bg-white">
-            Talk to seller ?
-          </div>
-        ) : null}
       </div>
+      {popUp ? (
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-5 border border-gray-900 rounded-md flex justify-between items-center space-x-3">
+          <Button
+            onClick={onMakeChatRoomClick}
+            text={loading ? "Loading..." : "Make Chatroom"}
+          />
+          <ButtonGray onClick={onPopUpBtnClick} text="No Thanks" />
+        </div>
+      ) : null}
     </Layout>
   );
 };

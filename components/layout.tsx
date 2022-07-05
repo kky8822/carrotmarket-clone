@@ -48,7 +48,14 @@ export default function Layout({
         ) : null}
         {title ? <span>{title}</span> : null}
       </div>
-      <div className={cls("pt-8", hasTabBar ? "pb-12" : "")}>{children}</div>
+      <div
+        className={cls(
+          "pt-8 w-full relative h-screen",
+          hasTabBar ? "pb-12" : ""
+        )}
+      >
+        {children}
+      </div>
       {hasTabBar ? (
         <nav className="bg-white max-w-xl text-gray-700 border-t fixed bottom-0 w-full px-5 py-3 flex justify-between text-xs">
           <Link href="/">
