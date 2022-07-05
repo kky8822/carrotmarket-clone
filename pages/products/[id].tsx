@@ -7,6 +7,8 @@ import { Product, User } from "@prisma/client";
 import Link from "next/link";
 import useMutation from "@libs/client/useMutation";
 import { cls } from "@libs/client/utils";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
 interface ProductWithUser extends Product {
   user: User;
@@ -30,26 +32,34 @@ const ItemDetail: NextPage = () => {
     if (!data) return;
     mutate({ ...data, isFav: !data.isFav }, false);
   };
+  const [talkToSeller, setTalkToSeller] = useState<boolean>(false);
+  const onBtnClick = () => {
+    setTalkToSeller((prev) => !prev);
+  };
 
   return (
     <Layout title="Products" canGoBack>
-      <div className="px-4 py-10">
+      <div className="px-4 py-10 z-1 w-full">
         <div className="mb-8">
-          <img
-            src={`https://imagedelivery.net/93usl5Ygdo4diWvQKul4DQ/${data?.product.image}/product`}
-            className="aspect-video"
-          />
+          <div className="relative pb-[480px] bg-zinc-500">
+            <Image
+              alt=""
+              src={`https://imagedelivery.net/93usl5Ygdo4diWvQKul4DQ/${data?.product.image}/product`}
+              className="object-cover"
+              layout="fill"
+              quality={100}
+            />
+          </div>
 
           <Link href={`/profile/${data?.product?.user?.id}`}>
             <a className="flex py-3 border-t border-b items-center space-x-3 cursor-pointer">
-              {data?.product.user.avatar ? (
-                <img
-                  src={`https://imagedelivery.net/93usl5Ygdo4diWvQKul4DQ/${data?.product.user.avatar}/avatar`}
-                  className="w-12 h-12 rounded-full "
-                />
-              ) : (
-                <div className="w-12 h-12 rounded-full bg-zinc-500" />
-              )}
+              <Image
+                alt=""
+                width={48}
+                height={48}
+                src={`https://imagedelivery.net/93usl5Ygdo4diWvQKul4DQ/${data?.product.user.avatar}/avatar`}
+                className="w-12 h-12 rounded-full bg-zinc-500"
+              />
 
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-gray-700">
@@ -62,6 +72,7 @@ const ItemDetail: NextPage = () => {
               </div>
             </a>
           </Link>
+
           <div className="mt-5">
             <h1 className="text-3xl font-bold text-gray-900">
               {data?.product?.name}
@@ -72,52 +83,9 @@ const ItemDetail: NextPage = () => {
             <p className="text-base my-6 text-gray-700">
               {data?.product?.description}
             </p>
-            <div className="flex items-center justify-between space-x-2">
-              <Button large text="Talk to seller" />
-              <button
-                onClick={onFavClick}
-                className={cls(
-                  "p-3 rounded-md flex items-center justify-center hover:bg-gray-100 active:bg-gray-100",
-                  data?.isFav
-                    ? "text-red-500 hover:text-red-600 active:text-red-600"
-                    : "text-gray-400 hover:text-gray-500 active:text-gray-500"
-                )}
-              >
-                {data?.isFav ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    className="h-6 w-6 "
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                    />
-                  </svg>
-                )}
-              </button>
-            </div>
           </div>
         </div>
-        <div>
+        <div className="border-t-[1.5px] border-gray-200 py-5">
           <h2 className="text-2xl font-bold text-gray-900">Similar items</h2>
           <div className="mt-6 grid grid-cols-2 gap-4">
             {data?.relatedProducts.map((product) => (
@@ -133,6 +101,54 @@ const ItemDetail: NextPage = () => {
             ))}
           </div>
         </div>
+        <div className="flex bg-white max-w-lg w-full fixed bottom-0 items-center justify-between space-x-2 border-t-[1.5px] border-gray-200 py-2">
+          <Button onClick={onBtnClick} large text="Talk to seller" />
+          <button
+            onClick={onFavClick}
+            className={cls(
+              "p-3 rounded-md flex items-center justify-center hover:bg-gray-100 active:bg-gray-100",
+              data?.isFav
+                ? "text-red-500 hover:text-red-600 active:text-red-600"
+                : "text-gray-400 hover:text-gray-500 active:text-gray-500"
+            )}
+          >
+            {data?.isFav ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            ) : (
+              <svg
+                className="h-6 w-6 "
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
+              </svg>
+            )}
+          </button>
+        </div>
+        {talkToSeller ? (
+          <div className="fixed top-1/2 w-2/3 h-[200px] bg-white">
+            Talk to seller ?
+          </div>
+        ) : null}
       </div>
     </Layout>
   );

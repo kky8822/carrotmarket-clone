@@ -25,7 +25,7 @@ export default function Layout({
       <div
         className={cls(
           !canGoBack ? "justify-center" : "",
-          "bg-white w-full max-w-lg text-lg font-medium py-3 fixed text-gray-700 border-b top-0 flex items-center px-5"
+          "bg-white w-full max-w-lg text-lg font-medium py-3 fixed z-10 text-gray-700 border-b top-0 flex items-center px-5"
         )}
       >
         {canGoBack ? (
