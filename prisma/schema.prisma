@@ -29,7 +29,6 @@ model User {
   messages          Message[]
   chats             Chat[]
   purchaseChatrooms Chatroom[]  @relation(name: "purchaseChatrooms")
-  saleChatrooms     Chatroom[]  @relation(name: "saleChatrooms")
 }
 
 model Token {
@@ -148,9 +147,7 @@ model Chatroom {
   product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId   Int
   purchaser   User     @relation(name: "purchaseChatrooms", fields: [purchaserId], references: [id], onDelete: Cascade)
-  purchaserId Int      @default(1)
-  seller      User     @relation(name: "saleChatrooms", fields: [sellerId], references: [id], onDelete: Cascade)
-  sellerId    Int      @default(1)
+  purchaserId Int
   chats       Chat[]
 }
 
@@ -161,6 +158,6 @@ model Chat {
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     Int
   message    String   @db.MediumText
-  chatroom   Chatroom @relation(fields: [chatroomId], references: [id])
+  chatroom   Chatroom @relation(fields: [chatroomId], references: [id], onDelete: Cascade)
   chatroomId Int
 }

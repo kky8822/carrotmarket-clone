@@ -11,6 +11,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import ButtonGray from "@components/buttonGray";
 import { useForm } from "react-hook-form";
+import useUser from "@libs/client/useUser";
+import products from "pages/api/products";
 
 interface ProductWithUser extends Product {
   user: User;
@@ -29,6 +31,7 @@ interface MakeChatRoomResponse {
 }
 
 const ItemDetail: NextPage = () => {
+  const { user } = useUser();
   const router = useRouter();
   const { data, mutate } = useSWR<ItemDetailResponse>(
     router.query.id ? `/api/products/${router.query.id}` : null
@@ -61,24 +64,28 @@ const ItemDetail: NextPage = () => {
       <div className="px-4 py-10 z-1 w-full">
         <div className="mb-8">
           <div className="relative pb-[480px] bg-zinc-500">
-            <Image
-              alt=""
-              src={`https://imagedelivery.net/93usl5Ygdo4diWvQKul4DQ/${data?.product.image}/product`}
-              className="object-cover"
-              layout="fill"
-              quality={100}
-            />
+            {data?.product ? (
+              <Image
+                alt=""
+                src={`https://imagedelivery.net/93usl5Ygdo4diWvQKul4DQ/${data?.product?.image}/product`}
+                className="object-cover"
+                layout="fill"
+                quality={100}
+              />
+            ) : null}
           </div>
 
           <Link href={`/profile/${data?.product?.user?.id}`}>
             <a className="flex py-3 border-t border-b items-center space-x-3 cursor-pointer">
-              <Image
-                alt=""
-                width={48}
-                height={48}
-                src={`https://imagedelivery.net/93usl5Ygdo4diWvQKul4DQ/${data?.product.user.avatar}/avatar`}
-                className="w-12 h-12 rounded-full bg-zinc-500"
-              />
+              {data?.product ? (
+                <Image
+                  alt=""
+                  width={48}
+                  height={48}
+                  src={`https://imagedelivery.net/93usl5Ygdo4diWvQKul4DQ/${data?.product?.user?.avatar}/avatar`}
+                  className="w-12 h-12 rounded-full bg-zinc-500"
+                />
+              ) : null}
 
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-gray-700">
@@ -110,7 +117,15 @@ const ItemDetail: NextPage = () => {
             {data?.relatedProducts.map((product) => (
               <Link href={`/products/${product.id}`} key={product.id}>
                 <a>
-                  <div className="h-40 mb-4 bg-zinc-500" />
+                  <div className="h-40 mb-4 relative bg-zinc-500">
+                    <Image
+                      alt=""
+                      src={`https://imagedelivery.net/93usl5Ygdo4diWvQKul4DQ/${product.image}/product`}
+                      className="object-cover"
+                      layout="fill"
+                      quality={100}
+                    />
+                  </div>
                   <h3 className="text-gray-700 -mb-1">{product.name}</h3>
                   <span className="text-sm font-medium text-gray-900">
                     ${product.price}
@@ -121,47 +136,51 @@ const ItemDetail: NextPage = () => {
           </div>
         </div>
         <div className="flex bg-white max-w-lg w-full fixed bottom-0 items-center justify-between space-x-2 border-t-[1.5px] border-gray-200 py-2">
-          <Button onClick={onPopUpBtnClick} large text="Talk to seller" />
-          <button
-            onClick={onFavClick}
-            className={cls(
-              "p-3 rounded-md flex items-center justify-center hover:bg-gray-100 active:bg-gray-100",
-              data?.isFav
-                ? "text-red-500 hover:text-red-600 active:text-red-600"
-                : "text-gray-400 hover:text-gray-500 active:text-gray-500"
-            )}
-          >
-            {data?.isFav ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                viewBox="0 0 20 20"
-                fill="currentColor"
+          {user?.id === data?.product.user.id ? null : (
+            <>
+              <Button onClick={onPopUpBtnClick} large text="Talk to seller" />
+              <button
+                onClick={onFavClick}
+                className={cls(
+                  "p-3 rounded-md flex items-center justify-center hover:bg-gray-100 active:bg-gray-100",
+                  data?.isFav
+                    ? "text-red-500 hover:text-red-600 active:text-red-600"
+                    : "text-gray-400 hover:text-gray-500 active:text-gray-500"
+                )}
               >
-                <path
-                  fillRule="evenodd"
-                  d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            ) : (
-              <svg
-                className="h-6 w-6 "
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                />
-              </svg>
-            )}
-          </button>
+                {data?.isFav ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="h-6 w-6 "
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                    />
+                  </svg>
+                )}
+              </button>
+            </>
+          )}
         </div>
       </div>
       {popUp ? (

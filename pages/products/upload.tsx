@@ -8,6 +8,7 @@ import useMutation from "@libs/client/useMutation";
 import { useEffect, useState } from "react";
 import { Product } from "@prisma/client";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 interface UploadProductForm {
   name: string;
@@ -30,6 +31,7 @@ const Upload: NextPage = () => {
     if (loading) return;
     if (photo && photo.length > 0) {
       const { uploadURL } = await (await fetch(`/api/files`)).json();
+      console.log(uploadURL);
       const form = new FormData();
       form.append("file", photo[0], name);
       const {
@@ -60,10 +62,14 @@ const Upload: NextPage = () => {
       <form onSubmit={handleSubmit(onValid)} className="px-4 py-10 space-y-5">
         <div>
           {photoPreview ? (
-            <img
-              src={photoPreview}
-              className="w-full aspect-video rounded-md"
-            />
+            <div className="relative w-full aspect-video rounded-md">
+              <Image
+                alt=""
+                src={photoPreview}
+                className="object-contain"
+                layout="fill"
+              />
+            </div>
           ) : (
             <label className="w-full cursor-pointer text-gray-600 hover:text-orange-500 hover:border-orange-500 active:text-orange-500 active:border-orange-500 flex items-center justify-center border-2 border-dashed border-gray-300 h-48 rounded-md">
               <svg

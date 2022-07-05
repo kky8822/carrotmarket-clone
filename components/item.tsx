@@ -1,7 +1,9 @@
+import Image from "next/image";
 import Link from "next/link";
 
 interface IItem {
   id: number;
+  image: string | null;
   title: string;
   detail?: string;
   price: number;
@@ -11,6 +13,7 @@ interface IItem {
 
 export default function Item({
   id,
+  image,
   title,
   detail,
   price,
@@ -21,7 +24,17 @@ export default function Item({
     <Link href={`/products/${id}`}>
       <a className="flex px-4 py-4 justify-between cursor-pointer">
         <div className="flex space-x-4">
-          <div className="aspect-square w-20 bg-zinc-500 rounded-md" />
+          <div className="aspect-square relative w-20 bg-zinc-500 rounded-md">
+            {image ? (
+              <Image
+                alt=""
+                src={`https://imagedelivery.net/93usl5Ygdo4diWvQKul4DQ/${image}/product`}
+                className="object-cover rounded-md"
+                layout="fill"
+                quality={100}
+              />
+            ) : null}
+          </div>
           <div className="pt-2 flex flex-col">
             <h3 className="text-sm font-medium text-gray-900">{title}</h3>
             {detail ? (
