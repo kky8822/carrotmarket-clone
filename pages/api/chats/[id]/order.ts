@@ -72,17 +72,18 @@ async function handler(
       },
     });
 
-    const orderExist = Boolean(
-      await client.order.findFirst({
-        where: {
-          purchaserId: user?.id,
-          productId: product?.id,
-        },
-      })
-    );
+    const order = await client.order.findFirst({
+      where: {
+        OR: [{ purchaserId: user?.id }, { product: { userId: user?.id } }],
+        productId: product?.id,
+      },
+    });
+
+    const orderExist = Boolean(order);
 
     res.json({
       ok: true,
+      order,
       orderExist,
     });
   }

@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import Layout from "@components/layout";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { Chat, Product, User } from "@prisma/client";
+import { Chat, Order, Product, User } from "@prisma/client";
 import ChatComp from "@components/chat";
 import { useForm } from "react-hook-form";
 import useMutation from "@libs/client/useMutation";
@@ -12,6 +12,8 @@ import FloatingBtnPopup from "@components/floating-button-popup";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Button from "@components/button";
+import order from "pages/api/chats/[id]/order";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface ChatWithUser extends Chat {
   user: User;
@@ -29,6 +31,7 @@ interface ChatDetailForm {
 
 interface OrderResponse {
   ok: boolean;
+  order: Order;
   orderExist: boolean;
 }
 
@@ -72,19 +75,31 @@ const ChatDetail: NextPage = () => {
     setProductPopup((prev) => !prev);
   };
 
-  const [sendOrder, { loading: sendOrderLoading, data: sendOrderData }] =
-    useMutation(`/api/chats/${router.query.id}/order`);
-  const onOrderClick = () => {
-    if (sendOrderLoading) return;
-    sendOrder({});
-  };
-
   const { data: orderData, mutate: orderMutate } = useSWR<OrderResponse>(
     router.query.id ? `/api/chats/${router.query.id}/order` : null
   );
-  useEffect(() => {
-    orderMutate();
-  }, [orderMutate]);
+  const [sendOrder, { loading: sendOrderLoading }] = useMutation(
+    `/api/chats/${router.query.id}/order`
+  );
+  const onOrderClick = () => {
+    sendOrder({});
+    if (!orderData) return;
+    if (sendOrderLoading) return;
+    orderMutate({ ...orderData, orderExist: true }, false);
+  };
+
+  const [sendAccept, { loading: sendAcceptLoading }] = useMutation(
+    `/api/chats/${router.query.id}/accept`
+  );
+  const onAcceptClick = () => {
+    if (orderData?.order?.accept === true || !orderData?.orderExist) return;
+    sendAccept({});
+    if (sendAcceptLoading) return;
+    orderMutate(
+      { ...orderData, order: { ...orderData.order, accept: true } },
+      false
+    );
+  };
 
   return (
     <Layout canGoBack>
@@ -131,41 +146,66 @@ const ChatDetail: NextPage = () => {
           />
         </svg>
       </FloatingBtnPopup>
-      {productPopup ? (
-        <div className="p-5 space-y-4 fixed bottom-[140px] right-[70px] w-3/4 h-1/2 bg-white border border-gray-200 rounded-t-xl rounded-bl-xl shadow-md">
-          <div className="aspect-video mx-auto relative bg-zinc-500">
-            <Image
-              alt=""
-              src={`https://imagedelivery.net/93usl5Ygdo4diWvQKul4DQ/${data?.product.image}/product`}
-              className="object-cover"
-              layout="fill"
-              quality={100}
-            />
-          </div>
-          <div className="mt-5">
-            <h1 className="text-2xl font-bold text-gray-900">
-              {data?.product?.name}
-            </h1>
-            <span className="text-2xl mt-3 text-gray-900 block">
-              {data ? "$" + data.product.price : "Loading"}
-            </span>
-            <p className="text-base my-6 text-gray-700">
-              {data?.product?.description}
-            </p>
-          </div>
-          <Button
-            onClick={onOrderClick}
-            bottomFix={true}
-            text={
-              sendOrderLoading
-                ? "Loading..."
-                : orderData?.orderExist
-                ? "Ordered"
-                : "Reservation"
-            }
-          />
-        </div>
-      ) : null}
+      <AnimatePresence>
+        {productPopup ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { duration: 0.2 } }}
+            exit={{ opacity: 0, transition: { duration: 0.2 } }}
+            className="p-5 space-y-4 fixed bottom-[140px] right-[70px] w-3/4 h-1/2 bg-white border border-gray-200 rounded-t-xl rounded-bl-xl shadow-md"
+          >
+            <div className="aspect-video mx-auto relative bg-zinc-500">
+              <Image
+                alt=""
+                src={`https://imagedelivery.net/93usl5Ygdo4diWvQKul4DQ/${data?.product.image}/product`}
+                className="object-cover"
+                layout="fill"
+                quality={100}
+              />
+            </div>
+            <div className="mt-5">
+              <h1 className="text-2xl font-bold text-gray-900">
+                {data?.product?.name}
+              </h1>
+              <span className="text-2xl mt-3 text-gray-900 block">
+                {data ? "$" + data.product.price : "Loading"}
+              </span>
+              <p className="text-base my-6 text-gray-700">
+                {data?.product?.description}
+              </p>
+            </div>
+            {user?.id !== data?.product.userId ? (
+              <Button
+                onClick={onOrderClick}
+                bottomFix={true}
+                text={
+                  sendOrderLoading
+                    ? "Loading..."
+                    : orderData?.order?.accept
+                    ? "Accepted"
+                    : orderData?.orderExist
+                    ? "Ordered"
+                    : "Reservation"
+                }
+              />
+            ) : (
+              <Button
+                onClick={onAcceptClick}
+                bottomFix={true}
+                text={
+                  sendAcceptLoading
+                    ? "Loading..."
+                    : orderData?.order?.accept
+                    ? "Accepted"
+                    : orderData?.orderExist
+                    ? "Accept?"
+                    : "Wating reservation"
+                }
+              />
+            )}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </Layout>
   );
 };

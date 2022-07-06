@@ -40,7 +40,7 @@ const Chats: NextPage = () => {
 
   return (
     <Layout title="Chats" hasTabBar>
-      <div className="pt-10 flex space-x-2">
+      <div className="pt-10 flex space-x-2 mx-2">
         <Button
           onClick={purchaseClick}
           color={purchaseMode ? "orange" : "gray"}

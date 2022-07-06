@@ -173,4 +173,5 @@ model Order {
   purchaser   User     @relation(fields: [purchaserId], references: [id], onDelete: Cascade)
   purchaserId Int
   closingTime DateTime
+  accept      Boolean  @default(false)
 }
