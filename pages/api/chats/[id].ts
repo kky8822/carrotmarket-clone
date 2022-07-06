@@ -27,9 +27,18 @@ async function handler(
       },
     });
 
+    const product = await client.product.findFirst({
+      where: {
+        chatrooms: {
+          some: { id: +id.toString() },
+        },
+      },
+    });
+
     res.json({
       ok: true,
       chats,
+      product,
     });
   } else if (req.method === "POST") {
     const {

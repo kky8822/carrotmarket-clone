@@ -29,6 +29,7 @@ model User {
   messages          Message[]
   chats             Chat[]
   purchaseChatrooms Chatroom[]  @relation(name: "purchaseChatrooms")
+  orders            Order[]
 }
 
 model Token {
@@ -52,6 +53,7 @@ model Product {
   description String     @db.MediumText
   records     Record[]
   chatrooms   Chatroom[]
+  orders      Order[]
 }
 
 model Post {
@@ -160,4 +162,15 @@ model Chat {
   message    String   @db.MediumText
   chatroom   Chatroom @relation(fields: [chatroomId], references: [id], onDelete: Cascade)
   chatroomId Int
+}
+
+model Order {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId   Int
+  purchaser   User     @relation(fields: [purchaserId], references: [id], onDelete: Cascade)
+  purchaserId Int
+  closingTime DateTime
 }

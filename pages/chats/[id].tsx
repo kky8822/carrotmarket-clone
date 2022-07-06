@@ -2,11 +2,15 @@ import type { NextPage } from "next";
 import Layout from "@components/layout";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { Chat, User } from "@prisma/client";
+import { Chat, Product, User } from "@prisma/client";
 import ChatComp from "@components/chat";
 import { useForm } from "react-hook-form";
 import useMutation from "@libs/client/useMutation";
 import useUser from "@libs/client/useUser";
+import FloatingBtn from "@components/floating-button";
+import FloatingBtnPopup from "@components/floating-button-popup";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface ChatWithUser extends Chat {
   user: User;
@@ -15,6 +19,7 @@ interface ChatWithUser extends Chat {
 interface ChatDetailResponse {
   ok: boolean;
   chats: ChatWithUser[];
+  product: Product;
 }
 
 interface ChatDetailForm {
@@ -56,6 +61,11 @@ const ChatDetail: NextPage = () => {
     sendChat(form);
   };
 
+  const [productPopup, setProductPopup] = useState<boolean>(false);
+  const onClick = () => {
+    setProductPopup((prev) => !prev);
+  };
+
   return (
     <Layout canGoBack>
       <div className="py-10 px-4 space-y-4">
@@ -85,6 +95,46 @@ const ChatDetail: NextPage = () => {
           </div>
         </form>
       </div>
+      <FloatingBtnPopup onClick={onClick}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+          />
+        </svg>
+      </FloatingBtnPopup>
+      {productPopup ? (
+        <div className="p-5 space-y-4 fixed bottom-[140px] right-[70px] w-96 h-96 bg-white border border-gray-200 rounded-t-xl rounded-bl-xl shadow-md">
+          <div className="w-[344px] aspect-video mx-auto relative bg-zinc-500">
+            <Image
+              alt=""
+              src={`https://imagedelivery.net/93usl5Ygdo4diWvQKul4DQ/${data?.product.image}/product`}
+              className="object-cover"
+              layout="fill"
+              quality={100}
+            />
+          </div>
+          <div className="mt-5">
+            <h1 className="text-3xl font-bold text-gray-900">
+              {data?.product?.name}
+            </h1>
+            <span className="text-3xl mt-3 text-gray-900 block">
+              {data ? "$" + data.product.price : "Loading"}
+            </span>
+            <p className="text-base my-6 text-gray-700">
+              {data?.product?.description}
+            </p>
+          </div>
+        </div>
+      ) : null}
     </Layout>
   );
 };
