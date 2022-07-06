@@ -11,6 +11,7 @@ import FloatingBtn from "@components/floating-button";
 import FloatingBtnPopup from "@components/floating-button-popup";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Button from "@components/button";
 
 interface ChatWithUser extends Chat {
   user: User;
@@ -24,6 +25,11 @@ interface ChatDetailResponse {
 
 interface ChatDetailForm {
   chat: Chat;
+}
+
+interface OrderResponse {
+  ok: boolean;
+  orderExist: boolean;
 }
 
 const ChatDetail: NextPage = () => {
@@ -65,6 +71,20 @@ const ChatDetail: NextPage = () => {
   const onClick = () => {
     setProductPopup((prev) => !prev);
   };
+
+  const [sendOrder, { loading: sendOrderLoading, data: sendOrderData }] =
+    useMutation(`/api/chats/${router.query.id}/order`);
+  const onOrderClick = () => {
+    if (sendOrderLoading) return;
+    sendOrder({});
+  };
+
+  const { data: orderData, mutate: orderMutate } = useSWR<OrderResponse>(
+    router.query.id ? `/api/chats/${router.query.id}/order` : null
+  );
+  useEffect(() => {
+    orderMutate();
+  }, [orderMutate]);
 
   return (
     <Layout canGoBack>
@@ -112,8 +132,8 @@ const ChatDetail: NextPage = () => {
         </svg>
       </FloatingBtnPopup>
       {productPopup ? (
-        <div className="p-5 space-y-4 fixed bottom-[140px] right-[70px] w-96 h-96 bg-white border border-gray-200 rounded-t-xl rounded-bl-xl shadow-md">
-          <div className="w-[344px] aspect-video mx-auto relative bg-zinc-500">
+        <div className="p-5 space-y-4 fixed bottom-[140px] right-[70px] w-3/4 h-1/2 bg-white border border-gray-200 rounded-t-xl rounded-bl-xl shadow-md">
+          <div className="aspect-video mx-auto relative bg-zinc-500">
             <Image
               alt=""
               src={`https://imagedelivery.net/93usl5Ygdo4diWvQKul4DQ/${data?.product.image}/product`}
@@ -123,16 +143,27 @@ const ChatDetail: NextPage = () => {
             />
           </div>
           <div className="mt-5">
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-gray-900">
               {data?.product?.name}
             </h1>
-            <span className="text-3xl mt-3 text-gray-900 block">
+            <span className="text-2xl mt-3 text-gray-900 block">
               {data ? "$" + data.product.price : "Loading"}
             </span>
             <p className="text-base my-6 text-gray-700">
               {data?.product?.description}
             </p>
           </div>
+          <Button
+            onClick={onOrderClick}
+            bottomFix={true}
+            text={
+              sendOrderLoading
+                ? "Loading..."
+                : orderData?.orderExist
+                ? "Ordered"
+                : "Reservation"
+            }
+          />
         </div>
       ) : null}
     </Layout>
