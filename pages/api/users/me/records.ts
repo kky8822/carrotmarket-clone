@@ -6,8 +6,8 @@ import { User } from "@prisma/client";
 
 type kind = "Fav" | "Purchase" | "Sale";
 interface RequestType {
-  session: { user: User };
-  query: { kind: kind };
+  user: User;
+  kind: kind;
 }
 
 async function handler(
@@ -16,8 +16,10 @@ async function handler(
 ) {
   const {
     session: { user },
-    query: { kind },
+    query: { kind: kindRaw },
   } = req;
+
+  const kind: kind = kindRaw.toString() as kind;
 
   const records = await client.record.findMany({
     where: {

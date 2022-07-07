@@ -49,34 +49,42 @@ const Chats: NextPage = () => {
 
   return (
     <Layout title="Chats" hasTabBar>
-      <div className="grid grid-cols-2 gap-4 mt-8 w-full border-b">
-        <motion.button
-          key={method}
-          initial="on"
-          animate={"off"}
-          variants={variants}
+      <div className="grid grid-cols-2 gap-4 w-full border-b h-12">
+        <button
           className={cls(
-            "pb-2 font-medium border-b-2",
-            method === "purchase"
-              ? "text-orange-400 border-orange-500"
-              : "border-transparent text-gray-500"
+            "relative flex items-center justify-center font-medium w-full cursor-pointer",
+            method == "purchase" ? "text-orange-400" : "text-gray-500"
           )}
           onClick={purchaseClick}
         >
-          Purchase
-        </motion.button>
-        <motion.button
+          <span>Purchase</span>
+          {method == "purchase" ? (
+            <motion.div
+              layoutId="border"
+              transition={{ duration: 0.15 }}
+              className="absolute w-full h-12 border-b-2 border-orange-500"
+            />
+          ) : null}
+        </button>
+
+        <button
           className={cls(
-            "pb-2 font-medium border-b-2",
-            method === "sale"
-              ? "text-orange-400 border-orange-500"
-              : "border-transparent text-gray-500"
+            "relative flex items-center justify-center font-medium w-full cursor-pointer",
+            method == "sale" ? "text-orange-400" : "text-gray-500"
           )}
           onClick={saleClick}
         >
-          Sale
-        </motion.button>
+          <span>Sale</span>
+          {method == "sale" ? (
+            <motion.div
+              layoutId="border"
+              transition={{ duration: 0.15 }}
+              className="absolute w-full h-12 border-b-2 border-orange-500"
+            />
+          ) : null}
+        </button>
       </div>
+
       <div className="pt-2 pb-10 divide-y-[1.5px]">
         {method === "purchase" && (
           <>

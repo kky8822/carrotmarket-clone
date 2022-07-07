@@ -25,7 +25,7 @@ export default function Layout({
       <div
         className={cls(
           !canGoBack ? "justify-center" : "",
-          "bg-white w-full max-w-lg text-lg font-medium py-3 fixed z-10 text-gray-700 border-b top-0 flex items-center px-5"
+          "bg-white w-full max-w-lg text-lg font-medium h-14 fixed z-10 text-gray-700 border-b top-0 flex items-center px-5"
         )}
       >
         {canGoBack ? (
@@ -48,11 +48,13 @@ export default function Layout({
         ) : null}
         {title ? <span>{title}</span> : null}
       </div>
-      <div className={cls("pt-8 w-full h-screen", hasTabBar ? "pb-12" : "")}>
+      <div
+        className={cls("pt-14 w-full h-screen", hasTabBar ? "pb-[72px]" : "")}
+      >
         {children}
       </div>
       {hasTabBar ? (
-        <nav className="fixed max-w-lg bg-white text-gray-700 border-t bottom-0 w-full px-5 py-3 flex justify-between text-xs">
+        <nav className="fixed max-w-lg bg-white text-gray-700 border-t bottom-0 w-full px-5 h-[72px] flex justify-between items-center text-xs">
           <Link href="/">
             <a
               className={cls(
