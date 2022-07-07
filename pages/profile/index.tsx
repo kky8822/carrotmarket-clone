@@ -5,6 +5,7 @@ import useUser from "@libs/client/useUser";
 import useSWR from "swr";
 import { Review, User } from "@prisma/client";
 import { cls } from "@libs/client/utils";
+import Image from "next/image";
 
 interface ReviewWithCreatedBy extends Review {
   createdBy: User;
@@ -16,21 +17,20 @@ interface ReviewResponse {
 }
 
 const Profile: NextPage = () => {
-  const { user, isLoading } = useUser();
+  const { user } = useUser();
   const { data } = useSWR<ReviewResponse>("/api/review");
 
   return (
     <Layout title="Profile" hasTabBar>
       <div className="py-10 px-4">
         <div className="flex items-center space-x-3">
-          {user?.avatar ? (
-            <img
-              src={`https://imagedelivery.net/93usl5Ygdo4diWvQKul4DQ/${user?.avatar}/avatar`}
-              className="w-16 h-16 rounded-full bg-zinc-500"
-            />
-          ) : (
-            <div className="w-16 h-16 rounded-full bg-zinc-500" />
-          )}
+          <Image
+            alt=""
+            width={56}
+            height={56}
+            src={`https://imagedelivery.net/93usl5Ygdo4diWvQKul4DQ/${user?.avatar}/avatar`}
+            className="w-16 h-16 rounded-full relative bg-zinc-500"
+          />
           <div className="flex flex-col">
             <span className="font-medium text-gray-900">{user?.name}</span>
             <Link href={`/profile/edit`}>

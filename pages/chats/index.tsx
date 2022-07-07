@@ -5,8 +5,9 @@ import useSWR from "swr";
 import { Chat, Chatroom, Product, User } from "@prisma/client";
 import Image from "next/image";
 import { useState } from "react";
-import Button from "@components/button";
-import ButtonGray from "@components/buttonGray";
+
+import { cls } from "@libs/client/utils";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface ProductWithUser extends Product {
   user: User;
@@ -27,33 +28,57 @@ const Chats: NextPage = () => {
     `/api/chats/purchase-chats`
   );
   const { data: saleChats } = useSWR<ChatResponse>(`/api/chats/sale-chats`);
-  const [purchaseMode, setPurchaseMode] = useState<boolean>(true);
-  const [saleMode, setSaleMode] = useState<boolean>(false);
+  const [method, setMethod] = useState<"purchase" | "sale">("purchase");
   const purchaseClick = () => {
-    setPurchaseMode(true);
-    setSaleMode(false);
+    setMethod("purchase");
   };
   const saleClick = () => {
-    setSaleMode(true);
-    setPurchaseMode(false);
+    setMethod("sale");
+  };
+
+  const variants = {
+    on: {
+      textColor: "rgb(251, 146, 60)",
+      borderColor: "rgba(249, 115, 22, 1)",
+    },
+    off: {
+      textColor: "rgb(107, 114, 128)",
+      borderColor: "rgba(249, 115, 22, 0)",
+    },
   };
 
   return (
     <Layout title="Chats" hasTabBar>
-      <div className="pt-10 flex space-x-2 mx-2">
-        <Button
+      <div className="grid grid-cols-2 gap-4 mt-8 w-full border-b">
+        <motion.button
+          key={method}
+          initial="on"
+          animate={"off"}
+          variants={variants}
+          className={cls(
+            "pb-2 font-medium border-b-2",
+            method === "purchase"
+              ? "text-orange-400 border-orange-500"
+              : "border-transparent text-gray-500"
+          )}
           onClick={purchaseClick}
-          color={purchaseMode ? "orange" : "gray"}
-          text="Purchase"
-        />
-        <Button
+        >
+          Purchase
+        </motion.button>
+        <motion.button
+          className={cls(
+            "pb-2 font-medium border-b-2",
+            method === "sale"
+              ? "text-orange-400 border-orange-500"
+              : "border-transparent text-gray-500"
+          )}
           onClick={saleClick}
-          color={saleMode ? "orange" : "gray"}
-          text="Sale"
-        />
+        >
+          Sale
+        </motion.button>
       </div>
       <div className="pt-2 pb-10 divide-y-[1.5px]">
-        {purchaseMode && (
+        {method === "purchase" && (
           <>
             {purchaseChats?.chatrooms.map((chatroom) => (
               <Link key={chatroom.id} href={`/chats/${chatroom.id}`}>
@@ -78,7 +103,7 @@ const Chats: NextPage = () => {
             ))}
           </>
         )}
-        {saleMode && (
+        {method === "sale" && (
           <>
             {saleChats?.chatrooms.map((chatroom) => (
               <Link key={chatroom.id} href={`/chats/${chatroom.id}`}>

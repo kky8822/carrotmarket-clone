@@ -7,12 +7,10 @@ import ChatComp from "@components/chat";
 import { useForm } from "react-hook-form";
 import useMutation from "@libs/client/useMutation";
 import useUser from "@libs/client/useUser";
-import FloatingBtn from "@components/floating-button";
 import FloatingBtnPopup from "@components/floating-button-popup";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Button from "@components/button";
-import order from "pages/api/chats/[id]/order";
 import { AnimatePresence, motion } from "framer-motion";
 
 interface ChatWithUser extends Chat {
