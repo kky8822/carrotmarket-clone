@@ -24,7 +24,7 @@ export default function Item({
     <Link href={`/products/${id}`}>
       <a className="flex px-4 py-4 justify-between cursor-pointer">
         <div className="flex space-x-4">
-          <div className="aspect-square relative w-20 bg-zinc-500 rounded-md">
+          <div className="aspect-square relative w-20 rounded-md">
             {image ? (
               <Image
                 alt=""

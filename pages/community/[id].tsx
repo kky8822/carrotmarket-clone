@@ -83,7 +83,7 @@ const CommunityPostDetail: NextPage = () => {
   }, [answerData, reset, mutate]);
 
   return (
-    <Layout canGoBack>
+    <Layout canGoBack seoTitle="CommunityDetail">
       <div className="py-10">
         <span className="inline-flex ml-4 my-2.5 items-center rounded-full py-0.5 px-2.5 text-xs font-medium bg-gray-100 text-gray-800">
           동네질문

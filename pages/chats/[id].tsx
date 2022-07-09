@@ -100,7 +100,7 @@ const ChatDetail: NextPage = () => {
   };
 
   return (
-    <Layout canGoBack>
+    <Layout canGoBack seoTitle="ChatDetail">
       <div className="py-10 px-4 space-y-4">
         {data?.chats.map((chat) => (
           <ChatComp

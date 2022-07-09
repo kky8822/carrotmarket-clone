@@ -4,7 +4,7 @@ import ProductList from "@components/product-list";
 
 const Purchases: NextPage = () => {
   return (
-    <Layout canGoBack title="Purchases">
+    <Layout canGoBack title="Purchases" seoTitle="Purchases">
       <ProductList kind="Purchase" />
     </Layout>
   );

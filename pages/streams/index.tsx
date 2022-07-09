@@ -24,7 +24,7 @@ const Stream: NextPage = () => {
   };
 
   return (
-    <Layout title="Streams" hasTabBar>
+    <Layout title="Streams" seoTitle="Streams" hasTabBar>
       <div className="py-10  divide-y-2 space-y-4">
         <div className="flex px-4 justify-between items-center space-x-4">
           {page !== 1 && (

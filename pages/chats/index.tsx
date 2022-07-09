@@ -1,13 +1,16 @@
-import type { NextPage } from "next";
+import type { NextPage, NextPageContext } from "next";
 import Link from "next/link";
 import Layout from "@components/layout";
-import useSWR from "swr";
+import useSWR, { SWRConfig } from "swr";
 import { Chat, Chatroom, Product, User } from "@prisma/client";
 import Image from "next/image";
 import { useState } from "react";
 
 import { cls } from "@libs/client/utils";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
+import client from "@libs/server/client";
+import useUser from "@libs/client/useUser";
+import { withSsrSession } from "@libs/server/withSession";
 
 interface ProductWithUser extends Product {
   user: User;
@@ -24,10 +27,10 @@ interface ChatResponse {
 }
 
 const Chats: NextPage = () => {
-  const { data: purchaseChats } = useSWR<ChatResponse>(
+  const { data: purchaseChatsData } = useSWR<ChatResponse>(
     `/api/chats/purchase-chats`
   );
-  const { data: saleChats } = useSWR<ChatResponse>(`/api/chats/sale-chats`);
+  const { data: saleChatsData } = useSWR<ChatResponse>(`/api/chats/sale-chats`);
   const [method, setMethod] = useState<"purchase" | "sale">("purchase");
   const purchaseClick = () => {
     setMethod("purchase");
@@ -36,19 +39,8 @@ const Chats: NextPage = () => {
     setMethod("sale");
   };
 
-  const variants = {
-    on: {
-      textColor: "rgb(251, 146, 60)",
-      borderColor: "rgba(249, 115, 22, 1)",
-    },
-    off: {
-      textColor: "rgb(107, 114, 128)",
-      borderColor: "rgba(249, 115, 22, 0)",
-    },
-  };
-
   return (
-    <Layout title="Chats" hasTabBar>
+    <Layout title="Chats" seoTitle="Chats" hasTabBar>
       <div className="grid grid-cols-2 gap-4 w-full border-b h-12">
         <button
           className={cls(
@@ -88,7 +80,7 @@ const Chats: NextPage = () => {
       <div className="pt-2 pb-10 divide-y-[1.5px]">
         {method === "purchase" && (
           <>
-            {purchaseChats?.chatrooms.map((chatroom) => (
+            {purchaseChatsData?.chatrooms.map((chatroom) => (
               <Link key={chatroom.id} href={`/chats/${chatroom.id}`}>
                 <a className="flex py-3 px-4 items-center space-x-3 cursor-pointer">
                   <Image
@@ -113,7 +105,7 @@ const Chats: NextPage = () => {
         )}
         {method === "sale" && (
           <>
-            {saleChats?.chatrooms.map((chatroom) => (
+            {saleChatsData?.chatrooms.map((chatroom) => (
               <Link key={chatroom.id} href={`/chats/${chatroom.id}`}>
                 <a className="flex py-3 px-4 items-center space-x-3 cursor-pointer">
                   <Image
@@ -141,4 +133,82 @@ const Chats: NextPage = () => {
   );
 };
 
-export default Chats;
+const Page: NextPage<{
+  purchaseChats: ChatroomWithProductPurchaserChat[];
+  saleChats: ChatroomWithProductPurchaserChat[];
+}> = ({ purchaseChats, saleChats }) => {
+  return (
+    <SWRConfig
+      value={{
+        fallback: {
+          "/api/chats/purchase-chats": {
+            ok: true,
+            chatrooms: purchaseChats,
+          },
+          "/api/chats/sale-chats": {
+            ok: true,
+            chatrooms: saleChats,
+          },
+        },
+      }}
+    >
+      <Chats />
+    </SWRConfig>
+  );
+};
+
+export const getServerSideProps = withSsrSession(async function ({
+  req,
+}: NextPageContext) {
+  const purchaseChats = await client.chatroom.findMany({
+    where: {
+      purchaserId: req?.session?.user?.id,
+    },
+    include: {
+      product: {
+        select: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              avatar: true,
+            },
+          },
+        },
+      },
+      chats: {
+        take: -1,
+      },
+    },
+  });
+  const saleChats = await client.chatroom.findMany({
+    where: {
+      product: {
+        user: {
+          id: req?.session?.user?.id,
+        },
+      },
+    },
+    include: {
+      purchaser: {
+        select: {
+          id: true,
+          name: true,
+          avatar: true,
+        },
+      },
+      chats: {
+        take: -1,
+      },
+    },
+  });
+
+  return {
+    props: {
+      purchaseChats: JSON.parse(JSON.stringify(purchaseChats)),
+      saleChats: JSON.parse(JSON.stringify(saleChats)),
+    },
+  };
+});
+
+export default Page;

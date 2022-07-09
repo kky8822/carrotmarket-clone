@@ -70,7 +70,7 @@ const StreamDetail: NextPage = () => {
   };
 
   return (
-    <Layout canGoBack>
+    <Layout canGoBack seoTitle="StreamsDetail">
       <div className="py-10 px-4">
         <div className="w-full rounded-md shadow-sm bg-zinc-500 aspect-video" />
         <div className="mt-5">

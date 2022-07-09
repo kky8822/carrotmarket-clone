@@ -6,6 +6,7 @@ import useUser from "@libs/client/useUser";
 import { useEffect, useState } from "react";
 import useMutation from "@libs/client/useMutation";
 import Layout from "@components/layout";
+import Image from "next/image";
 
 interface EditProfileForm {
   email?: string;
@@ -98,13 +99,16 @@ const EditProfie: NextPage = () => {
   }, [avatar]);
 
   return (
-    <Layout canGoBack title="Edit Profile">
+    <Layout canGoBack title="Edit Profile" seoTitle="Edit Profile">
       <form onSubmit={handleSubmit(onValid)} className="py-10 px-4 space-y-4">
         <div className="flex items-center space-x-3">
           {avatarPreview ? (
-            <img
+            <Image
+              alt=""
               src={avatarPreview}
               className="w-14 h-14 rounded-full bg-zinc-500 "
+              width={56}
+              height={56}
             />
           ) : (
             <div className="w-14 h-14 rounded-full bg-zinc-500" />
